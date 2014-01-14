@@ -71,6 +71,16 @@ class roboarm_class():
 		self.ser.write  (str_to_write)
 		time.sleep((ms+200)/1000)
 
+	def direct(self, cmd):
+		self.ser.write(cmd)
+		time.sleep(2)
+
+	def extend_arm(self, speed):
+		str_to_write = '#1 P2025 #2 P2025 #3 P500 #4 P1630 T' + str(speed) + '\r\n'
+		print str_to_write
+		self.ser.write  (str_to_write)
+		time.sleep((speed+200)/1000)
+
 	def run(self):
 		try:
 			self.ser.close()
@@ -84,30 +94,45 @@ class roboarm_class():
 				print self.ser
 			time.sleep(0.001)
 
-if __name__== "__main__":
-	arm = roboarm_class('/dev/ttyUSB0', 115200)
+def extend_arm():
+	arm.direct('#1 P2025 #2 P2025 #3 P500 #4 P1630 T1500\r\n')
+
+def sweep():
+	arm.hip(0,2000)
+	arm.hip(180, 3000)
+
+
+def demo():
+	arm.hip(90, 1000)
+	arm.elbow(0, 1000)
 	arm.move('safety_position_1')
 	arm.wrist(180, 1000)
 	arm.elbow(90, 1000)
-	while True:
-		time.sleep(2)
-		arm.move('safety_position_1')
-		arm.move('inital_position_1')
-		arm.move('straight_up')
-		arm.wrist(0, 1000)
-		arm.wrist(180, 1000)
-		arm.wrist(90, 1000)
-		arm.grip(0, 1000)
-		arm.grip(180, 1000)
-		arm.move('inital_position_1')
-		arm.hip(180, 1000)
-		arm.hip(0, 2000)
-		arm.wrist(180, 1000)
-		arm.elbow(140, 1000)
-		arm.shoulder(180, 2000)
-		arm.shoulder(0, 2000)
-		arm.elbow(0, 2000)
-		arm.elbow(180, 2000)	
-		arm.wrist(90, 1000)
-		arm.move('safety_position_1')
+	arm.move('inital_position_1')
+	arm.move('straight_up')
+	arm.wrist(0, 1000)
+	arm.wrist(180, 1000)
+	arm.wrist(90, 1000)
+	arm.grip(0, 1000)
+	arm.grip(180, 1000)
+	arm.move('inital_position_1')
+	arm.hip(180, 1000)
+	arm.hip(0, 2000)
+	arm.wrist(180, 1000)
+	arm.elbow(140, 1000)
+	arm.shoulder(180, 2000)
+	arm.shoulder(0, 2000)
+	arm.elbow(0, 2000)
+	arm.elbow(180, 2000)	
+	arm.wrist(90, 1000)
+	arm.move('safety_position_1')
+
+if __name__== "__main__":
+	arm = roboarm_class('/dev/ttyUSB0', 115200)
+	#demo()
+	arm.move('safety_position_1')
+	arm.extend_arm(2000)
+	sweep()
+	demo()
+
 	
